@@ -17,5 +17,6 @@ If you really want to set this up for yourself:
 1. Clone the repo
 2. Run `npm install`
 3. Copy `.env.template` to `.env` and change any relevant values
-4. Start the application, using `npm start` (or another NodeJS management suite
-   of your choice, such as `forever` or `nodemon`)
+4. Start the application, using `npm start`/`npm run start:production`  
+   (or another NodeJS management suite of your choice, such as `forever` or
+   `nodemon`)
