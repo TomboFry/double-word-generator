@@ -39,11 +39,14 @@ function getWordCombo() {
 function getRandomCombo(user_id) {
 	return getStatement(
 		'getRandomCombo',
-		`SELECT combo.id as combo_id, wa.word AS word_a, wb.word as word_b FROM combo
-			INNER JOIN words as wa ON combo.word_a_id = wa.id
-			INNER JOIN words as wb ON combo.word_b_id = wb.id
-			LEFT JOIN vote as v ON combo.id = v.combo_id
-		WHERE v.id IS NULL OR v.user_id != $user_id
+		`SELECT DISTINCT c.id AS combo_id, wa.word AS word_a, wb.word AS word_b FROM combo c
+			INNER JOIN words wa ON word_a_id = wa.id
+			INNER JOIN words wb ON word_b_id = wb.id
+			LEFT JOIN vote v ON c.id = v.combo_id
+		WHERE NOT EXISTS (
+			SELECT DISTINCT vote.combo_id FROM vote
+			WHERE c.id = vote.combo_id AND vote.user_id = $user_id
+		)
 		ORDER BY RANDOM() LIMIT 1`,
 	).get({ user_id });
 }
@@ -92,7 +95,7 @@ export function insertVote(combo_id, user_id, score) {
 export function getUserFavouriteWords(user_id) {
 	return getStatement(
 		'getUserFavouriteWords',
-		`SELECT wa.word as word_a, wb.word as word_b FROM vote
+		`SELECT wa.word AS word_a, wb.word AS word_b FROM vote
 		INNER JOIN combo AS c ON c.id = vote.combo_id
 		INNER JOIN words AS wa ON word_a_id = wa.id
 		INNER JOIN words AS wb ON word_b_id = wb.id
