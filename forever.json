@@ -1,0 +1,9 @@
+{
+	"uid": "node-wordgen",
+	"append": true,
+	"watch": false,
+	"script": "src/index.js",
+	"command": "/usr/bin/node",
+	"outFile": "./log-out.log",
+	"errFile": "./log-err.log"
+}

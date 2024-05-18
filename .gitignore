@@ -130,5 +130,7 @@ psd
 thumb
 sketch
 
-data/*.json
+data/*.txt
+data/*.db-shm
+data/*.db-wal
 *.db

@@ -1,0 +1,87 @@
+<header id="header">
+	<h2>Double Word Generator</h2>, by <a href="https://www.tombo.sh" target="_blank">Tombo</a>
+</header>
+<main id="game">
+	<div id="words">
+		<a href="#" target="_blank" rel="noopener" id="word-left">loading,</a>
+		<a href="#" target="_blank" rel="noopener" id="word-right">please wait...</a>
+	</div>
+	<div id="buttons">
+		<div class="filler"></div>
+		<button class="button" id="btn-bad" onclick="javascript:voteBad();">Bad</button>
+		<button class="button" id="btn-good" onclick="javascript:voteGood();">Good</button>
+	</div>
+</main>
+<script type="text/javascript" defer>
+let current_combo_id = 0;
+const word_a = document.getElementById('word-left');
+const word_b = document.getElementById('word-right');
+const btn_bad = document.getElementById('btn-bad');
+const btn_good = document.getElementById('btn-good');
+
+const toTitleCase = str => {
+	if (str.length < 2) return str.toUpperCase();
+
+	return `${str[0].toUpperCase()}${str.slice(1).toLowerCase()}`;
+};
+
+function updateWords(new_word_a, new_word_b) {
+	word_a.innerText = toTitleCase(new_word_a);
+	word_a.setAttribute('href', `https://duckduckgo.com?q=${new_word_a}+definition`);
+
+	word_b.innerText = toTitleCase(new_word_b);
+	word_b.setAttribute('href', `https://duckduckgo.com?q=${new_word_b}+definition`);
+}
+
+const httpRequest = (url, method = 'POST', body) => new Promise((resolve, reject) => {
+	const request = new XMLHttpRequest();
+
+	request.open(method, url, true);
+	request.setRequestHeader('Content-Type', 'application/json');
+	request.onerror = function () {
+		reject();
+	}
+	request.onload = function () {
+		if (this.status >= 200 && this.status < 400) {
+			resolve(JSON.parse(this.response));
+			return;
+		} else {
+			// We reached our target server, but it returned an error
+			reject();
+			return;
+		}
+	};
+	request.send(body ? JSON.stringify(body) : undefined);
+});
+
+async function vote(score) {
+	btn_bad.setAttribute('disabled', 'disabled');
+	btn_good.setAttribute('disabled', 'disabled');
+	const response = await httpRequest(
+		'/game/vote',
+		'POST',
+		{ combo_id: current_combo_id, score }
+	);
+	current_combo_id = response.combo_id;
+	updateWords(response.word_a, response.word_b);
+	btn_bad.removeAttribute('disabled');
+	btn_good.removeAttribute('disabled');
+}
+
+function voteBad() {
+	vote(-1);
+}
+
+function voteGood() {
+	vote(1);
+}
+
+async function init() {
+	const response = await httpRequest('/game/word', 'GET');
+
+	current_combo_id = response.combo_id;
+	updateWords(response.word_a, response.word_b);
+}
+
+init();
+</script>
