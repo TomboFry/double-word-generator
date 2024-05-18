@@ -39,14 +39,15 @@ function getWordCombo() {
 function getRandomCombo(user_id) {
 	return getStatement(
 		'getRandomCombo',
-		`SELECT DISTINCT c.id AS combo_id, wa.word AS word_a, wb.word AS word_b FROM combo c
+		`SELECT DISTINCT c.id AS combo_id, wa.word AS word_a, wb.word AS word_b, SUM(v.score) AS score FROM combo c
 			INNER JOIN words wa ON word_a_id = wa.id
 			INNER JOIN words wb ON word_b_id = wb.id
 			LEFT JOIN vote v ON c.id = v.combo_id
 		WHERE NOT EXISTS (
 			SELECT DISTINCT vote.combo_id FROM vote
 			WHERE c.id = vote.combo_id AND vote.user_id = $user_id
-		)
+		) AND (score > -4 OR score IS NULL)
+		GROUP BY c.id
 		ORDER BY RANDOM() LIMIT 1`,
 	).get({ user_id });
 }
