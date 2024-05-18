@@ -1,15 +1,13 @@
 import { Router } from 'express';
 import { authRequiredMiddleware } from '../../adapters/discord.js';
-import { generateCombo, getUserFavouriteWords, insertVote } from '../../database/words.js';
+import { generateCombo, insertVote } from '../../database/words.js';
 
 const router = Router();
 
 router.use(authRequiredMiddleware);
 
 router.get('/', (req, res) => {
-	res.render('game', {
-		favourites: getUserFavouriteWords(req.user_id),
-	});
+	res.render('game');
 });
 
 router.get('/word', (req, res) => res.send(generateCombo(req.user_id)));
