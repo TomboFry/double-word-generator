@@ -101,6 +101,6 @@ export function getUserFavouriteWords(user_id) {
 		INNER JOIN words AS wa ON word_a_id = wa.id
 		INNER JOIN words AS wb ON word_b_id = wb.id
 		WHERE user_id = $user_id AND score > 0
-		ORDER BY score DESC`,
+		LIMIT 100`,
 	).all({ user_id });
 }

@@ -2,6 +2,9 @@
 	<span class="header-titlebar">
 		<h2>Double Word Generator</h2>, by <a href="https://www.tombo.sh" target="_blank">Tombo</a>
 	</span>
+	<div class="header-button" id="header-button-fav" onclick="javascript:favOpen();">
+		✅ <span id="header-fav-count">0</span>
+	</div>
 </header>
 <main id="game">
 	<div id="words">
@@ -10,16 +13,34 @@
 	</div>
 	<div id="buttons">
 		<div class="filler"></div>
-		<button class="button" id="btn-bad" onclick="javascript:voteBad();">Bad</button>
-		<button class="button" id="btn-good" onclick="javascript:voteGood();">Good</button>
+		<button class="button" id="btn-bad" onclick="javascript:voteBad();">❌ Bad</button>
+		<button class="button" id="btn-good" onclick="javascript:voteGood();">✅ Good</button>
 	</div>
 </main>
+<section id="fav-overlay">
+	<div id="fav-panel">
+		<header class="header">
+			<span class="header-titlebar">Favourites</span>
+			<div class="header-button" onclick="javascript:favClose();">&times;</div>
+		</header>
+		<div id="fav-content">
+			<div class="fav-item notice">Only displays the most recent 100!</div>
+		</div>
+	</div>
+</section>
 <script type="text/javascript" defer>
 let current_combo_id = 0;
-const word_a = document.getElementById('word-left');
-const word_b = document.getElementById('word-right');
+
+// Elements
+const word_left = document.getElementById('word-left');
+const word_right = document.getElementById('word-right');
 const btn_bad = document.getElementById('btn-bad');
 const btn_good = document.getElementById('btn-good');
+const favOverlay = document.getElementById('fav-overlay');
+const favContent = document.getElementById('fav-content');
+const favCounter = document.getElementById('header-fav-count');
+
+const favourites = {{{favourites}}};
 
 const toTitleCase = str => {
 	if (str.length < 2) return str.toUpperCase();
@@ -28,11 +49,27 @@ const toTitleCase = str => {
 };
 
 function updateWords(new_word_a, new_word_b) {
-	word_a.innerText = toTitleCase(new_word_a);
-	word_a.setAttribute('href', `https://duckduckgo.com?q=${new_word_a}+definition`);
+	word_left.innerText = toTitleCase(new_word_a);
+	word_left.setAttribute('href', `https://duckduckgo.com?q=${new_word_a}+definition`);
 
-	word_b.innerText = toTitleCase(new_word_b);
-	word_b.setAttribute('href', `https://duckduckgo.com?q=${new_word_b}+definition`);
+	word_right.innerText = toTitleCase(new_word_b);
+	word_right.setAttribute('href', `https://duckduckgo.com?q=${new_word_b}+definition`);
+}
+
+function favOpen() {
+	favOverlay.style.display = 'block';
+}
+
+function favClose() {
+	favOverlay.style.display = 'none';
+}
+
+function addFav(word_a, word_b) {
+	const div = document.createElement('div');
+	div.classList.add('fav-item');
+	div.innerText = `${toTitleCase(word_a)} ${toTitleCase(word_b)}`;
+	favContent.appendChild(div);
+	favCounter.innerText = favourites.length;
 }
 
 const httpRequest = (url, method = 'POST', body) => new Promise((resolve, reject) => {
@@ -76,6 +113,12 @@ function voteBad() {
 
 function voteGood() {
 	vote(1);
+
+	favourites.push({
+		word_a: word_left.innerText,
+		word_b: word_right.innerText,
+	});
+	addFav(word_left.innerText, word_right.innerText);
 }
 
 async function init() {
@@ -83,6 +126,8 @@ async function init() {
 
 	current_combo_id = response.combo_id;
 	updateWords(response.word_a, response.word_b);
+
+	favourites.forEach(fav => addFav(fav.word_a, fav.word_b));
 }
 
 init();
