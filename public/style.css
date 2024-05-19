@@ -230,11 +230,11 @@ ul {
 	display: flex;
 	flex-direction: column;
 	flex: 1;
+	justify-content: center;
 }
 
 #buttons {
 	display: grid;
-	/* max-width: 640px; */
 	margin: 0 auto;
 	grid-template-columns: 1fr 1fr;
 	grid-template-rows: auto;
