@@ -1,3 +1,30 @@
+:root {
+	--bg-col: #222;
+	--bg-dark-col: #111;
+	--bg-light-col: #333;
+	--fg-col: #fff;
+	--fg-dark-col: #fed;
+
+	--primary-col: #FF7400;
+	--primary-light-col: #FF921D;
+
+	--bad-col: #b33;
+	--bad-light-col: #f44;
+	--good-col: #292;
+	--good-light-col: #4f4;
+
+	--discord-col: #5865F2;
+	--discord-hover-col: #7c87fd;
+
+	--shadow-col: rgba(0, 0, 0, 0.5);
+
+	--link-col: var(--fg-dark-col);
+	--link-hover-col: var(--primary-col);
+	--header-col: var(--bg-dark-col);
+	--btn-col: var(--primary-col);
+	--btn-hover-col: var(--primary-light-col)
+}
+
 * {
 	margin: 0;
 	padding: 0;
@@ -6,8 +33,8 @@
 }
 
 body {
-	color: #fff;
-	background-color: #222;
+	color: var(--fg-col);
+	background-color: var(--bg-col);
 	display: flex;
 	flex-direction: column;
 	justify-content: stretch;
@@ -19,12 +46,12 @@ body {
 }
 
 a {
-	color: #eee;
+	color: var(--link-col);
 	text-decoration: none;
 }
 
 a:hover {
-	color: #FF7400;
+	color: var(--link-hover-col);
 	text-decoration: underline;
 }
 
@@ -51,16 +78,31 @@ hr {
 	max-width: 50vw;
 }
 
-#header {
-	padding: 8px 16px;
+.header {
 	text-align: center;
-	background-color: #111;
+	background-color: var(--header-col);
 	font-size: 16px;
+	display: flex;
+	align-items: center;
 }
 
-#header h2 {
+.header h2 {
 	font-size: 16px;
 	display: inline;
+}
+
+.header-titlebar {
+	padding: 8px 16px;
+	flex: 1;
+}
+
+.header-button {
+	padding: 6px 8px;
+	cursor: pointer;
+	border-radius: 16px;
+	background-color: var(--btn-col);
+	margin: 4px;
+	font-weight: 700;
 }
 
 /*
@@ -77,30 +119,30 @@ hr {
 	text-decoration: none;
 	border: 0;
 	cursor: pointer;
-	background-color: #FF7400;
-	color: #fff;
+	background-color: var(--btn-col);
+	color: var(--fg-dark-col);
 	padding: 1vw 1.5vw;
 	border-radius: 0.5vw;
 	text-transform: uppercase;
 	font-weight: 700;
 	text-align: center;
 	font-size: 1.5vw;
-	box-shadow: 0 0.5vw 1.25vw rgba(0, 0, 0, 0.5);
+	box-shadow: 0 0.5vw 1.25vw var(--shadow-col);
 }
 
 .button:hover {
-	background-color: #FF921D;
-	color: #fff;
+	background-color: var(--btn-hover-col);
+	color: var(--fg-col);
 	text-decoration: none;
 }
 
 .discord {
-	background-color: #5865F2;
-	color: #fff;
+	background-color: var(--discord-col);
+	color: var(--fg-col);
 }
 
 .discord:hover {
-	background-color: #7c87fd;
+	background-color: var(--discord-hover-col);
 }
 
 /*
@@ -185,7 +227,7 @@ ul {
 
 #btn-bad {
 	grid-area: bad;
-	background-color: #b33;
+	background-color: var(--bad-col);
 }
 
 .filler {
@@ -194,16 +236,16 @@ ul {
 }
 
 #btn-bad:hover {
-	border: 0.4vw solid #f55;
+	border: 0.4vw solid var(--bad-light-col);
 }
 
 #btn-good {
 	grid-area: good;
-	background-color: #292;
+	background-color: var(--good-col);
 }
 
 #btn-good:hover {
-	border: 0.4vw solid #4f4;
+	border: 0.4vw solid var(--good-light-col);
 }
 
 @media (max-width: 800px) {
