@@ -8,7 +8,7 @@ router.use(authRequiredMiddleware());
 
 router.get('/', (req, res) => {
 	res.render('game', {
-		favourites: JSON.stringify(getUserFavouriteWords(req.user_id))
+		favourites: JSON.stringify(getUserFavouriteWords(req.user_id)),
 	});
 });
 
