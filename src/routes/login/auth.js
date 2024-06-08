@@ -9,6 +9,7 @@ router.get('/auth', (req, res) => {
 		redirect_uri: process.env.WORDGEN_DISCORD_REDIRECT_URI + '/login/callback',
 		scope: process.env.WORDGEN_DISCORD_SCOPES,
 		response_type: 'code',
+		prompt: 'none',
 		state,
 	}).toString();
 
