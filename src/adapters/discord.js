@@ -66,43 +66,47 @@ export async function getUserIdentity(access_token) {
  * @param {import('express').Response} res
  * @param {import('express').NextFunction} next
  */
-export async function authRequiredMiddleware(req, res, next) {
-	try {
-		const {
-			wordgen_oauth_token: access_token,
-			wordgen_oauth_expires_at: expires_at,
-		} = req.cookies;
+export function authRequiredMiddleware(verbose = true) {
+	return async function(req, res, next) {
+		try {
+			const {
+				wordgen_oauth_token: access_token,
+				wordgen_oauth_expires_at: expires_at,
+			} = req.cookies;
 
-		// Cookies must be present
-		if (!access_token || !expires_at) {
-			throw new Error('No access token provided');
+			// Cookies must be present
+			if (!access_token || !expires_at) {
+				throw new Error('No access token provided');
+			}
+
+			// Token must exist in database
+			const user = getUserFromToken(access_token);
+			if (!user) {
+				throw new Error('Token does not exist in the database');
+			}
+
+			// Token must be within date range
+			if (Date.now() > expires_at) {
+				const newTokens = await generateRefreshToken(user.token_refresh);
+				updateUser(
+					user.id,
+					user.name,
+					newTokens.access_token,
+					newTokens.refresh_token,
+					Date.now() + (newTokens.expires_in * 1000),
+				);
+			}
+
+			req.user_id = user.id;
+			req.user_name = user.name;
+
+			next();
+		} catch (err) {
+			if (verbose) {
+				console.error(err);
+			}
+			res.redirect('/new');
+			return;
 		}
-
-		// Token must exist in database
-		const user = getUserFromToken(access_token);
-		if (!user) {
-			throw new Error('Token does not exist in the database');
-		}
-
-		// Token must be within date range
-		if (Date.now() > expires_at) {
-			const newTokens = await generateRefreshToken(user.token_refresh);
-			updateUser(
-				user.id,
-				user.name,
-				newTokens.access_token,
-				newTokens.refresh_token,
-				Date.now() + (newTokens.expires_in * 1000),
-			);
-		}
-
-		req.user_id = user.id;
-		req.user_name = user.name;
-
-		next();
-	} catch (err) {
-		console.error(err);
-		res.redirect('/new');
-		return;
-	}
+	};
 }

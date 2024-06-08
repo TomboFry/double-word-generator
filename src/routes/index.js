@@ -8,6 +8,6 @@ const router = Router();
 router.use('/login', login);
 router.use('/game', game);
 router.use('/new', (_req, res) => res.render('home'));
-router.use('/', authRequiredMiddleware, (_req, res) => res.redirect('/game'));
+router.use('/', authRequiredMiddleware(false), (_req, res) => res.redirect('/game'));
 
 export default router;

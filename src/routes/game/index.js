@@ -4,7 +4,7 @@ import { generateCombo, getUserFavouriteWords, insertVote } from '../../database
 
 const router = Router();
 
-router.use(authRequiredMiddleware);
+router.use(authRequiredMiddleware());
 
 router.get('/', (req, res) => {
 	res.render('game', {
