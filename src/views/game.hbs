@@ -86,7 +86,7 @@ const httpRequest = (url, method = 'POST', body) => new Promise((resolve, reject
 			return;
 		} else {
 			// We reached our target server, but it returned an error
-			reject();
+			reject(JSON.parse(this.response));
 			return;
 		}
 	};
@@ -96,13 +96,17 @@ const httpRequest = (url, method = 'POST', body) => new Promise((resolve, reject
 async function vote(score) {
 	btn_bad.setAttribute('disabled', 'disabled');
 	btn_good.setAttribute('disabled', 'disabled');
-	const response = await httpRequest(
-		'/game/vote',
-		'POST',
-		{ combo_id: current_combo_id, score }
-	);
-	current_combo_id = response.combo_id;
-	updateWords(response.word_a, response.word_b);
+	try {
+		const response = await httpRequest(
+			'/game/vote',
+			'POST',
+			{ combo_id: current_combo_id, score }
+		);
+		current_combo_id = response.combo_id;
+		updateWords(response.word_a, response.word_b);
+	} catch (err) {
+		alert(`${err.name}: ${err.message}`);
+	}
 	btn_bad.removeAttribute('disabled');
 	btn_good.removeAttribute('disabled');
 }
